@@ -4,11 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.cmu.data.ui.screens.HistoricoScreen
 import com.example.cmu.data.ui.screens.LoginScreen
 import com.example.cmu.data.ui.screens.PlaceListScreen
 import com.example.cmu.data.ui.screens.PlaceDetailScreen
 import com.example.cmu.data.ui.screens.RegisterScreen
 import com.example.cmu.data.ui.screens.HomeScreen
+import com.example.cmu.data.ui.screens.LeaderboardScreen
+import com.example.cmu.data.ui.screens.PerfilScreen
 import com.example.cmu.ui.screens.MapScreen
 import com.google.firebase.auth.FirebaseAuth
 
@@ -22,6 +25,9 @@ sealed class Screen(val route: String) {
     object Register : Screen("register")
 
     object Map : Screen("map")
+    object Leaderboard : Screen("leaderboard")
+    object Historico : Screen("historico")
+    object Perfil : Screen("perfil")
 }
 
 /*@Composable
@@ -77,6 +83,13 @@ fun AppNavGraph(navController: NavHostController, hasLocationPermission: Boolean
         composable(Screen.Login.route) { LoginScreen(navController) }
 
         composable(Screen.Register.route) { RegisterScreen(navController) }
+
+        composable(Screen.Leaderboard.route) { LeaderboardScreen(navController) }
+
+        composable(Screen.Historico.route) { HistoricoScreen(navController) }
+
+        composable(Screen.Perfil.route) { PerfilScreen(navController) }
+
     }
 }
 

@@ -39,14 +39,36 @@ fun HomeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Button(onClick = {
-                auth.signOut()
-                navController.navigate(Screen.Login.route) {
-                    popUpTo(Screen.Home.route) { inclusive = true }
+            Button(onClick = { navController.navigate(Screen.Leaderboard.route) }) {
+                Text("Leaderboard")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(onClick = { navController.navigate(Screen.Historico.route) }) {
+                Text("Histórico de Avaliações")
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(onClick = { navController.navigate(Screen.Perfil.route) }) {
+                Text("Perfil")
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                onClick = {
+                    auth.signOut()
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
                 }
-            }) {
+            ) {
                 Text("Logout")
             }
+
         } else {
             Text("Ainda não tem sessão iniciada")
             Spacer(modifier = Modifier.height(12.dp))
@@ -60,4 +82,6 @@ fun HomeScreen(navController: NavController) {
         }
     }
 }
+
+
 

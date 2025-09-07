@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
+import com.example.cmu.data.sync.scheduleSync
 import com.example.cmu.data.ui.navigation.AppNavGraph
 import com.google.android.libraries.places.api.Places
 
@@ -19,6 +20,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //sync do room com o firestore
+        scheduleSync(this)
 
         // Inicializar o Places SDK
         if (!Places.isInitialized()) {
