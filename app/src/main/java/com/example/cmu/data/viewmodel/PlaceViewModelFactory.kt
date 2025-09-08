@@ -3,7 +3,7 @@ package com.example.cmu.data.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.cmu.data.local.PlaceRepository
-import com.example.cmu.data.local.PlaceViewModel
+import com.example.cmu.data.viewmodel.PlaceViewModel
 
 class PlaceViewModelFactory(private val repo: PlaceRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

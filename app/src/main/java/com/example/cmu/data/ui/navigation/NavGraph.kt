@@ -19,7 +19,7 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object PlaceList : Screen("place_list")
     object PlaceDetail : Screen("place_detail/{placeId}") {
-        fun createRoute(placeId: Int) = "place_detail/$placeId"
+        fun createRoute(placeId: String) = "place_detail/$placeId"
     }
     object Login : Screen("login")
     object Register : Screen("register")
@@ -76,7 +76,7 @@ fun AppNavGraph(navController: NavHostController, hasLocationPermission: Boolean
         composable(Screen.PlaceList.route) { PlaceListScreen(navController) }
 
         composable(Screen.PlaceDetail.route) { backStackEntry ->
-            val placeId = backStackEntry.arguments?.getString("placeId")?.toIntOrNull()
+            val placeId = backStackEntry.arguments?.getString("placeId")
             placeId?.let { PlaceDetailScreen(navController, it) }
         }
 

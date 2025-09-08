@@ -2,6 +2,7 @@ package com.example.cmu.data.repository
 
 import com.example.cmu.data.local.AvaliacaoDao
 import com.example.cmu.data.local.AvaliacaoEntity
+import com.example.cmu.data.model.LeaderboardItem
 import com.example.cmu.data.remote.FirebaseProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,7 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
 
             // Enviar para Firebase
             val data = hashMapOf(
-                "estabelecimentoId" to avaliacao.estabelecimentoId,
+                "placeId" to avaliacao.placeId,
                 "estrelas" to avaliacao.estrelas,
                 "comentario" to avaliacao.comentario,
                 "utilizador" to avaliacao.utilizador,
@@ -37,8 +38,8 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
     }
 
     // Últimas 10 avaliações de um estabelecimento
-    suspend fun listarUltimas(estabelecimentoId: Int): List<AvaliacaoEntity> =
-        withContext(Dispatchers.IO) { dao.listarUltimasAvaliacoes(estabelecimentoId) }
+    suspend fun listarUltimas(placeId: String): List<AvaliacaoEntity> =
+        withContext(Dispatchers.IO) { dao.listarUltimasAvaliacoes(placeId) }
 
     // Histórico completo
     suspend fun listarHistorico(): List<AvaliacaoEntity> =
@@ -51,7 +52,7 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
             .addOnSuccessListener { result ->
                 val lista = result.map { doc ->
                     AvaliacaoEntity(
-                        estabelecimentoId = (doc.getLong("estabelecimentoId") ?: 0).toInt(),
+                        placeId = (doc.getLong("placeId") ?: 0).toString(),
                         utilizador = doc.getString("utilizador") ?: "",
                         estrelas = doc.getLong("estrelas")?.toInt() ?: 0,
                         comentario = doc.getString("comentario") ?: "",
@@ -71,7 +72,7 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
         val unsynced = dao.getUnsynced()
         for (a in unsynced) {
             val data = hashMapOf(
-                "estabelecimentoId" to a.estabelecimentoId,
+                "placeId" to a.placeId,
                 "estrelas" to a.estrelas,
                 "comentario" to a.comentario,
                 "utilizador" to a.utilizador,
@@ -87,4 +88,9 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
                 }
         }
     }
+
+
+    suspend fun getLeaderboard(): List<LeaderboardItem> =
+        withContext(Dispatchers.IO) { dao.leaderboard() }
+
 }

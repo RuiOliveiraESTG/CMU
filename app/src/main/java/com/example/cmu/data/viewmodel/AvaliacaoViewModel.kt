@@ -3,6 +3,7 @@ package com.example.cmu.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cmu.data.local.AvaliacaoEntity
+import com.example.cmu.data.model.LeaderboardItem
 import com.example.cmu.data.repository.AvaliacaoRepository
 import kotlinx.coroutines.launch
 
@@ -24,9 +25,9 @@ class AvaliacaoViewModel(private val repository: AvaliacaoRepository) : ViewMode
         }
     }
 
-    fun listarUltimas(estabelecimentoId: Int, callback: (List<AvaliacaoEntity>) -> Unit) {
+    fun listarUltimas(placeId: String, callback: (List<AvaliacaoEntity>) -> Unit) {
         viewModelScope.launch {
-            val result = repository.listarUltimas(estabelecimentoId)
+            val result = repository.listarUltimas(placeId)
             callback(result)
         }
     }
@@ -34,6 +35,13 @@ class AvaliacaoViewModel(private val repository: AvaliacaoRepository) : ViewMode
     fun listarHistorico(callback: (List<AvaliacaoEntity>) -> Unit) {
         viewModelScope.launch {
             val result = repository.listarHistorico()
+            callback(result)
+        }
+    }
+
+    fun leaderboard(callback: (List<LeaderboardItem>) -> Unit) {
+        viewModelScope.launch {
+            val result = repository.getLeaderboard()
             callback(result)
         }
     }

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.cmu.data.model.LeaderboardItem
 
 @Dao
 interface AvaliacaoDao {
@@ -21,8 +22,8 @@ interface AvaliacaoDao {
     @Update
     suspend fun updateAvaliacao(avaliacao: AvaliacaoEntity)
 
-    @Query("SELECT * FROM avaliacoes WHERE estabelecimentoId = :estabelecimentoId ORDER BY timestamp DESC LIMIT 10")
-    suspend fun listarUltimasAvaliacoes(estabelecimentoId: Int): List<AvaliacaoEntity>
+    @Query("SELECT * FROM avaliacoes WHERE placeId = :placeId ORDER BY timestamp DESC LIMIT 10")
+    suspend fun listarUltimasAvaliacoes(placeId: String): List<AvaliacaoEntity>
 
     @Query("SELECT * FROM avaliacoes ORDER BY timestamp DESC")
     suspend fun listarHistorico(): List<AvaliacaoEntity>
@@ -32,4 +33,17 @@ interface AvaliacaoDao {
 
     @Query("UPDATE avaliacoes SET synced = 1 WHERE id = :id")
     suspend fun markSynced(id: Int)
+
+
+    @Query("""
+    SELECT placeId, AVG(estrelas) as media, COUNT(*) as total
+    FROM avaliacoes
+    GROUP BY placeId
+    ORDER BY media DESC
+""")
+    suspend fun leaderboard(): List<LeaderboardItem>
+
+    @Query("SELECT * FROM avaliacoes WHERE utilizador = :uid ORDER BY timestamp DESC")
+    suspend fun listarHistoricoUser(uid: String): List<AvaliacaoEntity>
+
 }

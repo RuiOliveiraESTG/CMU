@@ -13,4 +13,7 @@ interface PlaceDao {
 
     @Query("SELECT * FROM places")
     fun getAllPlaces(): Flow<List<PlaceEntity>>
+
+    @Query("SELECT * FROM places WHERE placeId = :placeId Limit 1")
+    suspend fun getPlaceById(placeId: String): PlaceEntity?
 }

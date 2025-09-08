@@ -7,7 +7,7 @@ import androidx.room.Room
 
 @Database(
     entities = [EstabelecimentoEntity::class, AvaliacaoEntity::class, PlaceEntity::class],
-    version = 2,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "cmu_database"
                 )
-                    .fallbackToDestructiveMigration() // apaga dados se schema mudar
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

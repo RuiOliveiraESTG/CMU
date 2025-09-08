@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cmu.data.sync.scheduleSync
 import com.example.cmu.data.ui.navigation.AppNavGraph
 import com.google.android.libraries.places.api.Places
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
 
@@ -63,5 +64,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        FirebaseAuth.getInstance().signOut()
     }
 }

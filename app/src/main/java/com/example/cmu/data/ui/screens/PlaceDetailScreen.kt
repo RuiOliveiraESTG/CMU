@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cmu.data.local.AppDatabase
 import com.example.cmu.data.local.AvaliacaoEntity
+import com.example.cmu.data.local.PlaceEntity
 import com.example.cmu.data.repository.AvaliacaoRepository
 import com.example.cmu.viewmodel.AvaliacaoViewModel
 import com.example.cmu.viewmodel.AvaliacaoViewModelFactory
@@ -21,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun PlaceDetailScreen(
     navController: NavController,
-    placeId: Int
+    placeId: String
 ) {
     // Criar repo e factory para ViewModel
     val context = LocalContext.current
@@ -30,23 +31,28 @@ fun PlaceDetailScreen(
     val factory = AvaliacaoViewModelFactory(repo)
     val viewModel: AvaliacaoViewModel = viewModel(factory = factory)
 
+    var place by remember { mutableStateOf<PlaceEntity?>(null) }
     var avaliacoes by remember { mutableStateOf<List<AvaliacaoEntity>>(emptyList()) }
     var comentario by remember { mutableStateOf("") }
     var estrelas by remember { mutableStateOf(0) }
 
     // Carregar últimas 10 avaliações
     LaunchedEffect(placeId) {
+        place = db.placeDao().getPlaceById(placeId)
         viewModel.listarUltimas(placeId) { avaliacoes = it }
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Detalhes do Estabelecimento") }) }
+        topBar = { TopAppBar(title = { Text(place?.name ?: "Detalhes") }) }
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
         ) {
+            Text(text = place?.address ?: "Sem endereço")
+            Spacer(Modifier.height(12.dp))
+
             Text(
                 "Últimas Avaliações:",
                 style = MaterialTheme.typography.titleMedium,
@@ -60,7 +66,7 @@ fun PlaceDetailScreen(
                             .padding(4.dp)
                     ) {
                         Column(modifier = Modifier.padding(8.dp)) {
-                            Text(text = "Usuário: " + avaliacao.utilizador)
+                            Text(text = "Utilizador: " + avaliacao.utilizador)
                             Text(text = "Estrelas: " + avaliacao.estrelas.toString())
                             Text(text = avaliacao.comentario)
                         }
@@ -95,7 +101,7 @@ fun PlaceDetailScreen(
                     }
 
                     val avaliacao = AvaliacaoEntity(
-                        estabelecimentoId = placeId,
+                        placeId = placeId,
                         utilizador = user.uid,
                         estrelas = estrelas,
                         comentario = comentario,

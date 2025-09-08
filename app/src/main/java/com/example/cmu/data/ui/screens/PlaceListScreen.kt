@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import com.example.cmu.data.local.DatabaseProvider
 import com.example.cmu.data.local.PlaceEntity
 import com.example.cmu.data.local.PlaceRepository
-import com.example.cmu.data.local.PlaceViewModel
+import com.example.cmu.data.viewmodel.PlaceViewModel
 import com.example.cmu.data.viewmodel.PlaceViewModelFactory
 import com.example.cmu.data.ui.navigation.Screen
 import com.example.cmu.R
@@ -42,7 +42,7 @@ fun PlaceListScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
                     .clickable {
-                        navController.navigate(Screen.PlaceDetail.createRoute(place.id))
+                        navController.navigate(Screen.PlaceDetail.createRoute(place.placeId))
                     },
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
