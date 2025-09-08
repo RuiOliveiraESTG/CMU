@@ -9,9 +9,9 @@ class PlaceRepository(private val dao: PlaceDao) {
 
     fun getPlaces(): Flow<List<PlaceEntity>> = dao.getAllPlaces()
 
-    suspend fun fetchAndSavePlaces(apiKey: String) {
+    suspend fun fetchAndSavePlaces(apiKey: String, lat: Double, lon: Double) {
         val response = RetrofitInstance.api.searchNearby(
-            location = "41.1579,-8.6291", // Porto
+            location = "$lat,$lon",
             radius = 1000,
             type = "restaurant",
             key = apiKey

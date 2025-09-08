@@ -12,7 +12,7 @@ import com.example.cmu.data.ui.screens.RegisterScreen
 import com.example.cmu.data.ui.screens.HomeScreen
 import com.example.cmu.data.ui.screens.LeaderboardScreen
 import com.example.cmu.data.ui.screens.PerfilScreen
-import com.example.cmu.ui.screens.MapScreen
+import com.example.cmu.data.ui.screens.MapScreen
 import com.google.firebase.auth.FirebaseAuth
 
 sealed class Screen(val route: String) {
@@ -30,27 +30,6 @@ sealed class Screen(val route: String) {
     object Perfil : Screen("perfil")
 }
 
-/*@Composable
-fun AppNavGraph(navController: NavHostController, hasLocationPermission: Boolean) {
-    NavHost(navController = navController, startDestination = Screen.Map.route) {
-        composable(Screen.Map.route) {
-            MapScreen(
-                hasLocationPermission = hasLocationPermission,
-                onMarkerClick = { placeId ->
-                    navController.navigate("estabelecimento_detail/$placeId")
-                }
-            )
-        }
-        composable(Screen.Home.route) { HomeScreen(navController) }
-        composable(Screen.PlaceList.route) { PlaceListScreen(navController) }
-        composable(Screen.PlaceDetail.route) { backStackEntry ->
-            val placeId = backStackEntry.arguments?.getString("placeId")?.toIntOrNull()
-            placeId?.let { PlaceDetailScreen(navController, it) }
-        }
-        composable(Screen.Login.route) { LoginScreen(navController) }
-        composable(Screen.Register.route) { RegisterScreen(navController) }
-    }
-}*/
 @Composable
 fun AppNavGraph(navController: NavHostController, hasLocationPermission: Boolean) {
     // Verifica se já há sessão iniciada

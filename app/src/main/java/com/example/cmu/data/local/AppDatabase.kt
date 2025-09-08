@@ -6,12 +6,11 @@ import android.content.Context
 import androidx.room.Room
 
 @Database(
-    entities = [EstabelecimentoEntity::class, AvaliacaoEntity::class, PlaceEntity::class],
-    version = 4,
+    entities = [AvaliacaoEntity::class, PlaceEntity::class],
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun estabelecimentoDao(): EstabelecimentoDao
     abstract fun avaliacaoDao(): AvaliacaoDao
     abstract fun placeDao(): PlaceDao
 

@@ -12,9 +12,9 @@ class PlaceViewModel(private val repository: PlaceRepository) : ViewModel() {
     val places = repository.getPlaces()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    fun loadPlaces(apiKey: String) {
+    fun loadPlaces(apiKey: String, lat: Double, lon: Double) {
         viewModelScope.launch {
-            repository.fetchAndSavePlaces(apiKey)
+            repository.fetchAndSavePlaces(apiKey, lat, lon)
         }
     }
 }

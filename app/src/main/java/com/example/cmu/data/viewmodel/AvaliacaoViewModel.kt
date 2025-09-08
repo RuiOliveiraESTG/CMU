@@ -1,4 +1,4 @@
-package com.example.cmu.viewmodel
+package com.example.cmu.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,20 +21,28 @@ class AvaliacaoViewModel(private val repository: AvaliacaoRepository) : ViewMode
 
     fun syncPending() {
         viewModelScope.launch {
-            repository.syncPending()
+            repository.sincronizarPendentes()
         }
     }
 
+    fun verificarUltimaAvaliacao(userId: String, callback: (AvaliacaoEntity?) -> Unit) {
+        viewModelScope.launch {
+            val ultima = repository.getUltimaAvaliacao(userId)
+            callback(ultima)
+        }
+    }
+
+
     fun listarUltimas(placeId: String, callback: (List<AvaliacaoEntity>) -> Unit) {
         viewModelScope.launch {
-            val result = repository.listarUltimas(placeId)
+            val result = repository.listarUltimasAvaliacoes(placeId)
             callback(result)
         }
     }
 
     fun listarHistorico(callback: (List<AvaliacaoEntity>) -> Unit) {
         viewModelScope.launch {
-            val result = repository.listarHistorico()
+            val result = repository.listarHistoricoUtilizador()
             callback(result)
         }
     }

@@ -18,7 +18,7 @@ class SyncWorker(
             val repo = AvaliacaoRepository(dao)
 
             // sincronizar Room → Firebase
-            repo.syncPending()
+            repo.sincronizarPendentes()
 
             // sincronizar Firebase → Room
             repo.syncFromFirebase()

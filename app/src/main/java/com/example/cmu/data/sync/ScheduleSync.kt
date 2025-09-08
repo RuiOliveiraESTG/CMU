@@ -10,7 +10,7 @@ fun scheduleSync(context: Context) {
         .setRequiredNetworkType(NetworkType.CONNECTED) // só corre com internet
         .build()
 
-    val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES)
+    val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(10, TimeUnit.MINUTES)
         .setConstraints(constraints)
         .build()
 

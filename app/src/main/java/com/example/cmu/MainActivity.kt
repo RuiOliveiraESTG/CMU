@@ -70,4 +70,9 @@ class MainActivity : ComponentActivity() {
         super.onStop()
         FirebaseAuth.getInstance().signOut()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        FirebaseAuth.getInstance().signOut()
+    }
 }

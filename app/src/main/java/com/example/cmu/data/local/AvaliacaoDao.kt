@@ -15,7 +15,6 @@ interface AvaliacaoDao {
     @Query("SELECT * FROM avaliacoes ORDER BY timestamp DESC")
     suspend fun getAvaliacoes(): List<AvaliacaoEntity>
 
-
     @Query("SELECT * FROM avaliacoes WHERE Synced = 0")
     suspend fun getAvaliacoesNaoSincronizadas(): List<AvaliacaoEntity>
 
@@ -25,14 +24,11 @@ interface AvaliacaoDao {
     @Query("SELECT * FROM avaliacoes WHERE placeId = :placeId ORDER BY timestamp DESC LIMIT 10")
     suspend fun listarUltimasAvaliacoes(placeId: String): List<AvaliacaoEntity>
 
-    @Query("SELECT * FROM avaliacoes ORDER BY timestamp DESC")
-    suspend fun listarHistorico(): List<AvaliacaoEntity>
-
     @Query("SELECT * FROM avaliacoes WHERE synced = 0")
     suspend fun getUnsynced(): List<AvaliacaoEntity>
 
     @Query("UPDATE avaliacoes SET synced = 1 WHERE id = :id")
-    suspend fun markSynced(id: Int)
+    suspend fun markSynced(id: String)
 
 
     @Query("""
@@ -45,5 +41,8 @@ interface AvaliacaoDao {
 
     @Query("SELECT * FROM avaliacoes WHERE utilizador = :uid ORDER BY timestamp DESC")
     suspend fun listarHistoricoUser(uid: String): List<AvaliacaoEntity>
+
+    @Query("SELECT * FROM avaliacoes WHERE utilizador = :userId ORDER BY timestamp DESC LIMIT 1")
+    suspend fun getUltimaAvaliacao(userId: String): AvaliacaoEntity?
 
 }

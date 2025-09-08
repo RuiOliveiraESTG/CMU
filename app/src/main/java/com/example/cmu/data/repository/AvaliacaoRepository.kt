@@ -4,10 +4,13 @@ import com.example.cmu.data.local.AvaliacaoDao
 import com.example.cmu.data.local.AvaliacaoEntity
 import com.example.cmu.data.model.LeaderboardItem
 import com.example.cmu.data.remote.FirebaseProvider
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
+
 
 class AvaliacaoRepository(private val dao: AvaliacaoDao) {
 
@@ -15,7 +18,11 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
     suspend fun adicionarAvaliacao(avaliacao: AvaliacaoEntity) {
         withContext(Dispatchers.IO) {
             // Guardar local
-            dao.inserirAvaliacao(avaliacao)
+            val avaliacaoFinal = if (avaliacao.id.isBlank()) {
+                avaliacao.copy(id = UUID.randomUUID().toString())
+            } else avaliacao
+
+            dao.inserirAvaliacao(avaliacaoFinal)
 
             // Enviar para Firebase
             val data = hashMapOf(
@@ -28,22 +35,23 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
             )
 
             FirebaseProvider.db.collection("avaliacoes")
-                .add(data)
+                .document(avaliacaoFinal.id)
+                .set(data)
                 .addOnSuccessListener {
                     CoroutineScope(Dispatchers.IO).launch {
-                        dao.markSynced(avaliacao.id)
+                        dao.markSynced(avaliacaoFinal.id)
                     }
                 }
         }
     }
 
     // Últimas 10 avaliações de um estabelecimento
-    suspend fun listarUltimas(placeId: String): List<AvaliacaoEntity> =
+    suspend fun listarUltimasAvaliacoes(placeId: String): List<AvaliacaoEntity> =
         withContext(Dispatchers.IO) { dao.listarUltimasAvaliacoes(placeId) }
 
     // Histórico completo
-    suspend fun listarHistorico(): List<AvaliacaoEntity> =
-        withContext(Dispatchers.IO) { dao.listarHistorico() }
+    suspend fun listarHistoricoUtilizador(): List<AvaliacaoEntity> =
+        withContext(Dispatchers.IO) { dao.listarHistoricoUser(FirebaseAuth.getInstance().currentUser!!.uid) }
 
     // Sincronizar Firebase → Room
     fun syncFromFirebase() {
@@ -52,7 +60,8 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
             .addOnSuccessListener { result ->
                 val lista = result.map { doc ->
                     AvaliacaoEntity(
-                        placeId = (doc.getLong("placeId") ?: 0).toString(),
+                        id = doc.id, // usa o id do Firebase
+                        placeId = doc.getString("placeId") ?: "",
                         utilizador = doc.getString("utilizador") ?: "",
                         estrelas = doc.getLong("estrelas")?.toInt() ?: 0,
                         comentario = doc.getString("comentario") ?: "",
@@ -68,8 +77,8 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
     }
 
     // Sincronizar Room → Firebase (quando offline e depois volta net)
-    suspend fun syncPending() {
-        val unsynced = dao.getUnsynced()
+    suspend fun sincronizarPendentes() {
+        val unsynced = withContext(Dispatchers.IO) { dao.getUnsynced() }
         for (a in unsynced) {
             val data = hashMapOf(
                 "placeId" to a.placeId,
@@ -80,7 +89,8 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
                 "timestamp" to a.timestamp
             )
             FirebaseProvider.db.collection("avaliacoes")
-                .add(data)
+                .document(a.id) // mantém o mesmo ID
+                .set(data)
                 .addOnSuccessListener {
                     CoroutineScope(Dispatchers.IO).launch {
                         dao.markSynced(a.id)
@@ -92,5 +102,8 @@ class AvaliacaoRepository(private val dao: AvaliacaoDao) {
 
     suspend fun getLeaderboard(): List<LeaderboardItem> =
         withContext(Dispatchers.IO) { dao.leaderboard() }
+
+    suspend fun getUltimaAvaliacao(userId: String): AvaliacaoEntity? =
+        withContext(Dispatchers.IO) { dao.getUltimaAvaliacao(userId) }
 
 }
