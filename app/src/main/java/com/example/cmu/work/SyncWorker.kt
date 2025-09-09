@@ -1,4 +1,4 @@
-package com.example.cmu.data.sync
+package com.example.cmu.work
 
 import android.content.Context
 import androidx.work.CoroutineWorker
@@ -13,14 +13,11 @@ class SyncWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            // obter instância da BD e do repositório
             val dao = AppDatabase.getDatabase(applicationContext).avaliacaoDao()
             val repo = AvaliacaoRepository(dao)
 
-            // sincronizar Room → Firebase
             repo.sincronizarPendentes()
 
-            // sincronizar Firebase → Room
             repo.syncFromFirebase()
 
             Result.success()

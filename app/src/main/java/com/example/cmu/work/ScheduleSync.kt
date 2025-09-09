@@ -1,4 +1,4 @@
-package com.example.cmu.data.sync
+package com.example.cmu.work
 
 import android.content.Context
 import androidx.work.*
@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 
 fun scheduleSync(context: Context) {
     val constraints = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.CONNECTED) // só corre com internet
+        .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
 
     val workRequest = PeriodicWorkRequestBuilder<SyncWorker>(10, TimeUnit.MINUTES)

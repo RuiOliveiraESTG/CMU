@@ -1,4 +1,4 @@
-package com.example.cmu.data.ui.screens
+package com.example.cmu.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.cmu.data.ui.navigation.Screen
+import com.example.cmu.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -77,7 +77,7 @@ fun HomeScreen(navController: NavController) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { navController.navigate(Screen.Register.route) }) {
-                Text("Registar")
+                Text("Register")
             }
         }
     }

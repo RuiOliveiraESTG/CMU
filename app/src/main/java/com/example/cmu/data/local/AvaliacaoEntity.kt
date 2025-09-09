@@ -10,7 +10,8 @@ data class AvaliacaoEntity(
     val utilizador: String,
     val estrelas: Int,
     val comentario: String,
-    val fotoPath: String? = null,
-    val timestamp: Long = System.currentTimeMillis(),
-    val synced: Boolean = false
+    val doce: String?,
+    val fotoPath: String?,
+    val timestamp: Long,
+    val synced: Boolean
 )

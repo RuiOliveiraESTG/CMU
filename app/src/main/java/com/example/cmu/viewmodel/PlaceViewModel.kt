@@ -1,8 +1,8 @@
-package com.example.cmu.data.viewmodel
+package com.example.cmu.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cmu.data.local.PlaceRepository
+import com.example.cmu.data.repository.PlaceRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch

@@ -1,5 +1,7 @@
-package com.example.cmu.data.viewmodel
+package com.example.cmu.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cmu.data.local.AvaliacaoEntity
@@ -9,34 +11,20 @@ import kotlinx.coroutines.launch
 
 class AvaliacaoViewModel(private val repository: AvaliacaoRepository) : ViewModel() {
 
+
+    private val _avaliacoes = MutableLiveData<List<AvaliacaoEntity>>(emptyList())
+    val avaliacoes: LiveData<List<AvaliacaoEntity>> = _avaliacoes
+
     fun adicionarAvaliacao(avaliacao: AvaliacaoEntity) {
         viewModelScope.launch {
             repository.adicionarAvaliacao(avaliacao)
+            listarUltimas(avaliacao.placeId)
         }
     }
 
-    fun syncFromFirebase() {
-        repository.syncFromFirebase()
-    }
-
-    fun syncPending() {
+    fun listarUltimas(placeId: String) {
         viewModelScope.launch {
-            repository.sincronizarPendentes()
-        }
-    }
-
-    fun verificarUltimaAvaliacao(userId: String, callback: (AvaliacaoEntity?) -> Unit) {
-        viewModelScope.launch {
-            val ultima = repository.getUltimaAvaliacao(userId)
-            callback(ultima)
-        }
-    }
-
-
-    fun listarUltimas(placeId: String, callback: (List<AvaliacaoEntity>) -> Unit) {
-        viewModelScope.launch {
-            val result = repository.listarUltimasAvaliacoes(placeId)
-            callback(result)
+            _avaliacoes.value = repository.listarUltimasAvaliacoes(placeId)
         }
     }
 
@@ -54,3 +42,4 @@ class AvaliacaoViewModel(private val repository: AvaliacaoRepository) : ViewMode
         }
     }
 }
+

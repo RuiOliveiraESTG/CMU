@@ -1,5 +1,7 @@
-package com.example.cmu.data.local
+package com.example.cmu.data.repository
 
+import com.example.cmu.data.local.PlaceDao
+import com.example.cmu.data.local.PlaceEntity
 import com.example.cmu.data.remote.FirebaseProvider
 import com.example.cmu.data.remote.RetrofitInstance
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +15,8 @@ class PlaceRepository(private val dao: PlaceDao) {
         val response = RetrofitInstance.api.searchNearby(
             location = "$lat,$lon",
             radius = 1000,
-            type = "restaurant",
+            type = "cafe",
+
             key = apiKey
         )
 
@@ -24,7 +27,8 @@ class PlaceRepository(private val dao: PlaceDao) {
                     name = it.name,
                     address = it.vicinity,
                     lat = it.geometry.location.lat,
-                    lon = it.geometry.location.lng
+                    lon = it.geometry.location.lng,
+                    phone = null
                 )
             }
             dao.insertPlaces(entities)
@@ -37,4 +41,5 @@ class PlaceRepository(private val dao: PlaceDao) {
             }
         }
     }
+
 }

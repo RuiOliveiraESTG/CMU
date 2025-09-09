@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1064224401786",
+    "project_id": "cmu-pastelaria",
+    "storage_bucket": "cmu-pastelaria.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064224401786:android:63f411a899b775a4e8cec3",
+        "android_client_info": {
+          "package_name": "com.example.cmu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8noskq5-e-EV52hR5neKEthaf9Y0Sh7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

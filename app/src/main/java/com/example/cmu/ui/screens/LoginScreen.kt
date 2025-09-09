@@ -1,19 +1,27 @@
-package com.example.cmu.data.ui.screens
+package com.example.cmu.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.cmu.data.ui.navigation.Screen
+import com.example.cmu.data.local.AppDatabase
+import com.example.cmu.data.repository.UserRepository
+import com.example.cmu.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController) {
+    val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -47,25 +55,40 @@ fun LoginScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = {
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
+        Button(
+            onClick = {
+                if (email.isNotBlank() && password.isNotBlank()) {
+                    FirebaseAuth.getInstance()
+                        .signInWithEmailAndPassword(email, password)
+                        .addOnSuccessListener { authResult ->
+                            val user = authResult.user
+                            if (user != null) {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    val db = AppDatabase.getDatabase(context)
+                                    val repo = UserRepository(db.userDao())
+                                    repo.saveUserFromFirebase(user)
+                                }
+
+                                navController.navigate(Screen.Home.route) {
+                                    popUpTo(Screen.Login.route) { inclusive = true }
+                                }
+                            }
                         }
-                    } else {
-                        errorMessage = task.exception?.message
-                    }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Erro: ${it.message}", Toast.LENGTH_LONG).show()
+                        }
                 }
-        }) {
-            Text("Entrar")
+            },
+            modifier = Modifier.fillMaxWidth().padding(8.dp)
+        ) {
+            Text("Login")
         }
+
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(onClick = { navController.navigate(Screen.Register.route) }) {
-            Text("Não tem conta? Registar")
+            Text("Register")
         }
 
         errorMessage?.let {

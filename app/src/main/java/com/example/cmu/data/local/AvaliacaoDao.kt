@@ -45,4 +45,10 @@ interface AvaliacaoDao {
     @Query("SELECT * FROM avaliacoes WHERE utilizador = :userId ORDER BY timestamp DESC LIMIT 1")
     suspend fun getUltimaAvaliacao(userId: String): AvaliacaoEntity?
 
+    @Query("SELECT AVG(estrelas) FROM avaliacoes WHERE placeId = :placeId")
+    suspend fun getMediaEstrelas(placeId: String): Double?
+
+    @Query("SELECT * FROM avaliacoes WHERE placeId = :placeId ORDER BY timestamp DESC LIMIT 10")
+    suspend fun listarUltimas10(placeId: String): List<AvaliacaoEntity>
+
 }

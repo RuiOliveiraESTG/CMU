@@ -12,23 +12,36 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
-import com.example.cmu.data.sync.scheduleSync
-import com.example.cmu.data.ui.navigation.AppNavGraph
+import androidx.work.*
+import com.example.cmu.ui.navigation.AppScaffold
+import com.example.cmu.work.ProximidadeWorker
+import com.example.cmu.work.scheduleSync
 import com.google.android.libraries.places.api.Places
 import com.google.firebase.auth.FirebaseAuth
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //sync do room com o firestore
-        scheduleSync(this)
-
-        // Inicializar o Places SDK
         if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, getString(R.string.google_maps_key))
+            Places.initialize(this, getString(R.string.google_maps_key))
         }
+
+        val workRequest = PeriodicWorkRequestBuilder<ProximidadeWorker>(15, TimeUnit.MINUTES)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            ).build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "proximidade_work",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
+
+        scheduleSync(this)
 
         setContent {
             MaterialTheme {
@@ -36,19 +49,15 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     var hasLocationPermission by remember { mutableStateOf(false) }
-
                     val locationPermissionLauncher = rememberLauncherForActivityResult(
                         ActivityResultContracts.RequestPermission()
-                    ) { granted ->
-                        hasLocationPermission = granted
-                    }
+                    ) { granted -> hasLocationPermission = granted }
 
                     LaunchedEffect(Unit) {
                         val granted = ContextCompat.checkSelfPermission(
                             this@MainActivity,
                             Manifest.permission.ACCESS_FINE_LOCATION
                         ) == PackageManager.PERMISSION_GRANTED
-
                         if (granted) {
                             hasLocationPermission = true
                         } else {
@@ -56,8 +65,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    // 🔑 Passamos a flag aqui
-                    AppNavGraph(
+                    AppScaffold(
                         navController = navController,
                         hasLocationPermission = hasLocationPermission
                     )
@@ -65,14 +73,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
     override fun onStop() {
         super.onStop()
-        FirebaseAuth.getInstance().signOut()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
         FirebaseAuth.getInstance().signOut()
     }
 }

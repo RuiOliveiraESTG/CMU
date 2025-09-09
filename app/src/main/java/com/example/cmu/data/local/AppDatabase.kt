@@ -6,13 +6,14 @@ import android.content.Context
 import androidx.room.Room
 
 @Database(
-    entities = [AvaliacaoEntity::class, PlaceEntity::class],
-    version = 5,
+    entities = [AvaliacaoEntity::class, PlaceEntity::class, UserEntity::class],
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun avaliacaoDao(): AvaliacaoDao
     abstract fun placeDao(): PlaceDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile

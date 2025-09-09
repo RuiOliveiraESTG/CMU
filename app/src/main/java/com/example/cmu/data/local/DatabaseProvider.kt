@@ -14,7 +14,7 @@ object DatabaseProvider {
                 AppDatabase::class.java,
                 "cmu_database"
             )
-                .fallbackToDestructiveMigration() // apaga e recria BD se mudar versão
+                .fallbackToDestructiveMigration()
                 .build()
             INSTANCE = instance
             instance
